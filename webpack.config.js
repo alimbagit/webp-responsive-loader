@@ -26,16 +26,12 @@ module.exports = {
             loader: "./src/utils/webp-responsive-loader",
             options: {
               name: "[path][name].[ext]",
+              emitOriginalFile: true,
+              resizeList: [200, 500, 1000],
+              publicPath: "images",
+              placeholder: true
             },
           },
-          // {
-          //   loader: "file-loader",
-          //   options: {
-          //     name: "[path][name].[ext]",
-          //     // esModule: false,
-          //     // emitFile: true,
-          //   },
-          // },
         ],
       },
     ]

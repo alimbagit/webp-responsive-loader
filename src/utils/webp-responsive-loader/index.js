@@ -1,6 +1,4 @@
-const _resizeList = ["240", "320", "480", "720", "1080"];
-
-const Buffer = require("buffer").Buffer;
+const _resizeDefaultList = [240, 320, 640, 720, 1080];
 
 const _webpConverter = require("webp-converter");
 
@@ -14,57 +12,72 @@ var _path = require("path");
 
 module.exports = function (content) {
   const options = _loaderUtils.getOptions(this);
-
   _schemaUtils(_options, options);
 
-  const url = _loaderUtils.interpolateName(this, options.name, {
-    context: this.rootContext,
-    content,
-    regExp: options.regExp,
+  /**Список размеров, в которые нужно перевести изображение */
+  const resizeList = options.resizeList ? options.resizeList : _resizeDefaultList;
+
+  /**Имя файла-источика с отоносительной директорией */
+  const outputPath = _loaderUtils.interpolateName(this, options.name, {
+    context: this.rootContext
   });
-  let outputPath = url;
-  console.log("url=", url);
-  console.log("content=", typeof content);
-  console.log("context=", this.context + options.name);
+
+  /**Имя файла, который будет в сборке */
+  const publicPath = options.publicPath
+    ? _path.normalize(options.publicPath + '/' + _path.basename(outputPath))
+    : outputPath;
+  console.log("options=", options);
   console.log("outputPath=", outputPath);
-  console.log("resourcePath=", this.resourcePath);
+  console.log("publicPath=", publicPath);
 
-  //Формирование массива путей для будущих .webp файлов
-  const extName = _path.extname(outputPath);
-  const baseName = _path.basename(outputPath, extName);
-  const dirName = _path.dirname(outputPath);
+  /**Расширение файла*/
+  const extNameOutput = _path.extname(publicPath);
 
-  let publicPathList = new Array();
+  /**Имя файла без расширения */
+  const baseNameOutput = _path.basename(publicPath, extNameOutput);
 
-  _resizeList.map((size) => {
-    let newPublicPath = _path.join(dirName, baseName + size + ".webp");
-    // newPublicPath = `__webpack_public_path__ + ${JSON.stringify(outputPath)}`;
-    // _webpConverter.cwebp(outputPath, newPublicPath, "-resize 0 " + size);
-    // const bufbase64= btoa(content);
-    // const bufbase64 = Buffer.from(content);
+  /**Директория, в которой находится файл*/
+  const dirNameOutput = _path.dirname(publicPath);
+
+
+  //создание placeholder файла
+  if (options.placeholder) {
+    let publicPathPlaceholder = _path.join(dirNameOutput, baseNameOutput + "_placeholder.webp");
     _webpConverter
-      .buffer2webpbuffer(content, extName.slice(1), "-resize 0 " + size)
+      .buffer2webpbuffer(content, extNameOutput.slice(1), "-q 10 -resize 100 0")
       .then((buf) => {
-        console.log("newPublicPath=", newPublicPath);
+        this.emitFile(publicPathPlaceholder, buf, null);
+      });
+  }
 
+  /**Массив путей для srcset */
+  let srcSetList = new Array();
+  /**Массив зусловий для атрибута sizes */
+  let sizesList = new Array();
+
+  //Формирование массива путей для будущих .webp файлов и добавление самих файлов
+  resizeList.map((size) => {
+    let newPublicPath = _path.join(dirNameOutput, baseNameOutput + size + ".webp");
+    _webpConverter
+      .buffer2webpbuffer(content, extNameOutput.slice(1), "-resize " + size + " 0")
+      .then((buf) => {
         this.emitFile(newPublicPath, buf, null);
       });
-    // publicPathList.push(newPublicPath);
+    srcSetList.push(`./${newPublicPath.replace(/\\/gi, "\/")} ${size}w`);
+    sizesList.push(`(max-width: ${size}px) ${size}px`);
   });
 
-  // console.log("publicPathList=", publicPathList);
+  //Добавление исходного файла в сборку
+  if (options.emitOriginalFile) {
+    this.emitFile(publicPath, content, null);
+  }
 
-  //==============================================================
-
-  // Проверяем включен ли параметр emitFile
-  // if (typeof options.emitFile === "undefined" || options.emitFile) {
-  //   // this.emitFile(_path.basename(outputPath), content, null);
-  //   this.emitFile(outputPath, content, null);
-  // }
-
-  // let publicPath = `__webpack_public_path__ + ${JSON.stringify(outputPath)}`;
-  // return `${"module.exports ="} ${publicPath};`;
-  return "hello";
+  return `${options.esModule ? "export default" : "module.exports ="} {
+    srcset: "${srcSetList.toString()}",
+    sizes: "${sizesList.toString()}",
+    srcOriginal: "${publicPath}",
+    alt: "${baseNameOutput}"
+  }`;
 };
 
 module.exports.raw = true;
