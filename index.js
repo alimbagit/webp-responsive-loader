@@ -1,4 +1,6 @@
-const _resizeDefaultList = [240, 320, 640, 720, 1080];
+const DEFAULTS={
+  resizeList = [240, 320, 640, 720, 1080]
+}
 
 const _webpConverter = require("webp-converter");
 
@@ -15,7 +17,7 @@ module.exports = function (content) {
   _schemaUtils(_options, options);
 
   /**Список размеров, в которые нужно перевести изображение */
-  const resizeList = options.resizeList ? options.resizeList : _resizeDefaultList;
+  const resizeList = options.resizeList ? options.resizeList : DEFAULTS.resizeList;
 
   /**Имя файла-источика с отоносительной директорией */
   const outputPath = _loaderUtils.interpolateName(this, options.name, {
@@ -39,10 +41,11 @@ module.exports = function (content) {
   /**Директория, в которой находится файл*/
   const dirNameOutput = _path.dirname(publicPath);
 
+  /**имя Placeholder файла, который будет возвращен */
+  const publicPathPlaceholder = _path.join(dirNameOutput, baseNameOutput + "_placeholder.webp");
 
   //создание placeholder файла
   if (options.placeholder) {
-    let publicPathPlaceholder = _path.join(dirNameOutput, baseNameOutput + "_placeholder.webp");
     _webpConverter
       .buffer2webpbuffer(content, extNameOutput.slice(1), "-q 10 -resize 100 0")
       .then((buf) => {
@@ -76,7 +79,8 @@ module.exports = function (content) {
     srcset: "${srcSetList.toString()}",
     sizes: "${sizesList.toString()}",
     srcOriginal: "${publicPath}",
-    alt: "${baseNameOutput}"
+    alt: "${baseNameOutput}",
+    placeholder: "${publicPathPlaceholder}"
   }`;
 };
 
