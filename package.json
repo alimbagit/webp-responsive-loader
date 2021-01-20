@@ -1,5 +1,6 @@
 {
   "name": "webpack-responsive-loader",
+  "version": "0.1.5",
   "main": "index.js",
   "dependencies": {
     "webp-converter": "2.3.1",
@@ -10,8 +11,7 @@
     "prettier": "^2.1.1",
     "eslint": "7.10.0"
   },
-  "scripts": {
-  },
+  "scripts": {},
   "author": "alimba",
   "license": "ISC"
 }
