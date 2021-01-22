@@ -1,0 +1,50 @@
+{
+  "properties": {
+    "name": {
+      "description": "The filename template for the target file(s)",
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "instanceof": "Function"
+        }
+      ]
+    },
+    "publicPath": {
+      "description": "A custom public path for the target file(s)",
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "instanceof": "Function"
+        }
+      ]
+    },
+
+    "emitOriginalFile": {
+      "description": "Если true, то добавлять оригинальный файл в сборку",
+      "type": "boolean"
+    },
+
+    "resizeList": {
+      "description": "Ширина новых webp файлов. Данный список используется когда нужно передать свои размеры конечных фалов webp",
+      "type": "array",
+      "items": {
+        "description": "Array of numbers",
+        "anyOf": [
+          {
+            "type": "number"
+          }
+        ]
+      }
+    },
+
+    "placeholder": {
+      "description": "placeholder. Будет показан пока основное изображение загружается",
+      "type": "boolean"
+    }
+  },
+  "type": "object"
+}

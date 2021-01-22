@@ -3,15 +3,23 @@
   "version": "0.1.5",
   "main": "index.js",
   "dependencies": {
-    "webp-converter": "2.3.1",
     "loader-utils": "^2.0.0",
-    "schema-utils": "2.7.1"
+    "schema-utils": "2.7.1",
+    "webp-converter": "2.3.1"
   },
   "devDependencies": {
+    "eslint": "7.10.0",
+    "jest": "^26.6.3",
     "prettier": "^2.1.1",
-    "eslint": "7.10.0"
+    "webpack": "4.44.2",
+    "memfs": "3.2.0"
   },
-  "scripts": {},
+  "scripts": {
+    "test": "jest"
+  },
+  "jest": {
+    "testEnvironment": "node"
+  },
   "author": "alimba",
   "license": "ISC"
 }
