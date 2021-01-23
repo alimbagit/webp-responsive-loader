@@ -1,18 +1,22 @@
 {
-  "name": "webpack-responsive-loader",
-  "version": "0.1.5",
+  "name": "webp-responsive-loader",
+  "description": "converts image files to webp format and adds to the project build",
+  "version": "0.1.3",
   "main": "index.js",
+  "types": "index.d.ts",
   "dependencies": {
     "loader-utils": "^2.0.0",
     "schema-utils": "2.7.1",
     "webp-converter": "2.3.1"
   },
   "devDependencies": {
+    "@babel/core": "^7.12.10",
+    "@babel/preset-env": "^7.12.11",
     "eslint": "7.10.0",
     "jest": "^26.6.3",
+    "memfs": "3.2.0",
     "prettier": "^2.1.1",
-    "webpack": "4.44.2",
-    "memfs": "3.2.0"
+    "webpack": "4.44.2"
   },
   "scripts": {
     "test": "jest"
@@ -21,5 +25,10 @@
     "testEnvironment": "node"
   },
   "author": "alimba",
-  "license": "ISC"
+  "keywords": ["webp", "image"],
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/alimbagit/webp-responsive-loader.git"
+  }
 }

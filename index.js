@@ -1,5 +1,5 @@
-export const DEFAULTS={
-  resizeList = [320, 720, 1080]
+const DEFAULTS = {
+  resizeList: [320, 720, 1080]
 }
 
 const _webpConverter = require("webp-converter");
@@ -75,13 +75,24 @@ module.exports = function (content) {
     this.emitFile(publicPath, content, null);
   }
 
-  return `${options.esModule ? "export default" : "module.exports ="} {
+  let returnObject;
+  if (options.emitOriginalFile) {
+    returnObject = `module.exports = {
     srcset: "${srcSetList.toString()}",
     sizes: "${sizesList.toString()}",
-    ${options.emitOriginalFile && "srcOriginal:"}"${options.emitOriginalFile && publicPath}",
+    srcOriginal: "${publicPath}",
     alt: "${baseNameOutput}",
     placeholder: "${publicPathPlaceholder}"
   }`;
+  } else {
+    returnObject = `module.exports = {
+      srcset: "${srcSetList.toString()}",
+      sizes: "${sizesList.toString()}",
+      alt: "${baseNameOutput}",
+      placeholder: "${publicPathPlaceholder}"
+    }`;
+  }
+  return returnObject;
 };
 
 module.exports.raw = true;
