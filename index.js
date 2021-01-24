@@ -1,6 +1,6 @@
 const DEFAULTS = {
-  resizeList: [320, 720, 1080]
-}
+  resizeList: [320, 720, 1080],
+};
 
 const _webpConverter = require("webp-converter");
 
@@ -12,25 +12,24 @@ var _schemaUtils = require("schema-utils");
 
 var _path = require("path");
 
-module.exports = function (content) {
+module.exports = async function (content) {
   const options = _loaderUtils.getOptions(this);
   _schemaUtils(_options, options);
 
   /**Список размеров, в которые нужно перевести изображение */
-  const resizeList = options.resizeList ? options.resizeList : DEFAULTS.resizeList;
+  const resizeList = options.resizeList
+    ? options.resizeList
+    : DEFAULTS.resizeList;
 
   /**Имя файла-источика с отоносительной директорией */
   const outputPath = _loaderUtils.interpolateName(this, options.name, {
-    context: this.rootContext
+    context: this.rootContext,
   });
 
   /**Имя файла, который будет в сборке */
   const publicPath = options.publicPath
-    ? _path.normalize(options.publicPath + '/' + _path.basename(outputPath))
+    ? _path.normalize(options.publicPath + "/" + _path.basename(outputPath))
     : outputPath;
-  console.log("options=", options);
-  console.log("outputPath=", outputPath);
-  console.log("publicPath=", publicPath);
 
   /**Расширение файла*/
   const extNameOutput = _path.extname(publicPath);
@@ -41,32 +40,41 @@ module.exports = function (content) {
   /**Директория, в которой находится файл*/
   const dirNameOutput = _path.dirname(publicPath);
 
-  /**имя Placeholder файла, который будет возвращен */
-  const publicPathPlaceholder = _path.join(dirNameOutput, baseNameOutput + "_placeholder.webp");
+  /**Placeholder, который будет возвращен */
+  let placeholder;
 
-  //создание placeholder файла
+  //создание placeholder
   if (options.placeholder) {
-    _webpConverter
-      .buffer2webpbuffer(content, extNameOutput.slice(1), "-q 10 -resize 100 0")
-      .then((buf) => {
-        this.emitFile(publicPathPlaceholder, buf, null);
-      });
+    placeholder = await (
+      await _webpConverter.buffer2webpbuffer(
+        content,
+        extNameOutput.slice(1),
+        "-q 10 -resize 100 0"
+      )
+    ).toString("base64");
   }
 
   /**Массив путей для srcset */
   let srcSetList = new Array();
-  /**Массив зусловий для атрибута sizes */
+  /**Массив условий для атрибута sizes */
   let sizesList = new Array();
 
   //Формирование массива путей для будущих .webp файлов и добавление самих файлов
   resizeList.map((size) => {
-    let newPublicPath = _path.join(dirNameOutput, baseNameOutput + size + ".webp");
+    let newPublicPath = _path.join(
+      dirNameOutput,
+      baseNameOutput + size + ".webp"
+    );
     _webpConverter
-      .buffer2webpbuffer(content, extNameOutput.slice(1), "-resize " + size + " 0")
+      .buffer2webpbuffer(
+        content,
+        extNameOutput.slice(1),
+        "-resize " + size + " 0"
+      )
       .then((buf) => {
         this.emitFile(newPublicPath, buf, null);
       });
-    srcSetList.push(`./${newPublicPath.replace(/\\/gi, "\/")} ${size}w`);
+    srcSetList.push(`./${newPublicPath.replace(/\\/gi, "/")} ${size}w`);
     sizesList.push(`(max-width: ${size}px) ${size}px`);
   });
 
@@ -75,23 +83,22 @@ module.exports = function (content) {
     this.emitFile(publicPath, content, null);
   }
 
-  let returnObject;
-  if (options.emitOriginalFile) {
-    returnObject = `module.exports = {
+  /**возвращаемый результат лоадера */
+  let returnObject = `module.exports = {
     srcset: "${srcSetList.toString()}",
     sizes: "${sizesList.toString()}",
-    srcOriginal: "${publicPath}",
-    alt: "${baseNameOutput}",
-    placeholder: "${publicPathPlaceholder}"
-  }`;
-  } else {
-    returnObject = `module.exports = {
-      srcset: "${srcSetList.toString()}",
-      sizes: "${sizesList.toString()}",
-      alt: "${baseNameOutput}",
-      placeholder: "${publicPathPlaceholder}"
-    }`;
+    alt: "${baseNameOutput}",`;
+
+  if (options.emitOriginalFile) {
+    returnObject += `
+    srcOriginal: "${publicPath}",`;
+  };
+  if (options.placeholder) {
+    returnObject += `
+    placeholder: "${placeholder}",`;
   }
+  returnObject += `
+  }`;
   return returnObject;
 };
 

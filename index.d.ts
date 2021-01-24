@@ -30,8 +30,3 @@
       const src: IWebpResponsiveLoader;
       export default src;
   }
-  
-  declare module '*.svg' {  
-    const src: IWebpResponsiveLoader;
-    export default src;
-  }
