@@ -62,10 +62,6 @@ import responsiveImage from 'img/myImage.jpg';
 - `srcset`, Современные браузеры будут выбирать наиболее близкое к изображению лучшее изображение в зависимости от плотности пикселей вашего экрана.
 
 
-
-
-More here https://github.com/webpack/loader-utils#parsequery
-
 ### Параметры
 
 | Параметр                      | Тип                 | Default                | Описание                                                                                                                                                                                                                                                                           |
@@ -139,20 +135,6 @@ import responsiveImage from 'img/myImage.jpg';
 ...
 ```
 
-The `resize` method takes a single argument which has a `width`, `mime` and `options` property (which receives all loader options)
-
-In your webpack config, require your adapter
-
-```js
-{
-  test: /\.(jpe?g|png)$/i,
-  loader: 'responsive-loader',
-  options: {
-    adapter: require('./my-adapter')
-    foo: 'bar' // will get passed to adapter.resize({width, mime, options: {foo: 'bar}})
-  }
-}
-```
 
 
 [npm]: https://img.shields.io/npm/v/webp-responsive-loader.svg

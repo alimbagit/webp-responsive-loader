@@ -1,7 +1,7 @@
 {
   "name": "webp-responsive-loader",
   "description": "converts image files to webp format and adds to the project build",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "main": "index.js",
   "types": "index.d.ts",
   "engines": {
