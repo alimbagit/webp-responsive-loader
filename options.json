@@ -16,9 +16,6 @@
       "anyOf": [
         {
           "type": "string"
-        },
-        {
-          "instanceof": "Function"
         }
       ]
     },

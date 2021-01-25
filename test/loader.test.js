@@ -1,7 +1,5 @@
-import fs from "fs";
 import compiler from "./compiler.js";
-const _webpConverter = require("webp-converter");
-var _path = require("path");
+
 
 test("param only name jpg file", async () => {
   const inputFileName = "./images/jpg-image.jpg";

@@ -26,7 +26,7 @@ module.exports = async function (content) {
     context: this.rootContext,
   });
 
-  /**Имя файла, который будет в сборке */
+  /**Полное имя файла, который будет в сборке */
   const publicPath = options.publicPath
     ? _path.normalize(options.publicPath + "/" + _path.basename(outputPath))
     : outputPath;
