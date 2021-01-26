@@ -3,7 +3,7 @@
 [![npm][npm]][npm-url]
 [![node][node]][node-url]
 
-Загрузчик веб-пакетов для адаптивных изображений. Создает несколько изображений формата .webp из одного исходного изображения и возвращает srcset и sizes. Чтобы иметь представление что такое адаптивные изображение можете пройти сюда [Responsive Images](https://developer.mozilla.org/en-US/docs/Learn/HTML/Multimedia_and_embedding/Responsive_images).
+Загрузчик webpack для адаптивных изображений. Создает несколько изображений формата .webp из одного исходного изображения и возвращает srcset и sizes. Чтобы иметь представление что такое адаптивные изображение можете пройти сюда [Responsive Images](https://developer.mozilla.org/en-US/docs/Learn/HTML/Multimedia_and_embedding/Responsive_images).
 
 
 ## Установка
@@ -22,7 +22,7 @@ yarn webp-responsive-loader -D
 
 ## Использование
 
-Добавьте правило для загрузки адаптивных изображений в конфигурацию вашего веб-пакета:
+Добавьте правило для загрузки адаптивных изображений в конфигурацию вашего webpack:
 
 ```js
 module.exports = {
